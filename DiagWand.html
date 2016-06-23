@@ -9,7 +9,7 @@
 }
 
 .link.G.spin0 {
-  stroke: red;
+  stroke: url(#gradient);
 }
 .link.G.spin1 {
   stroke: blue;
@@ -123,6 +123,22 @@ var text = svg.append("g").selectAll("text")
     .attr("x", 8)
     .attr("y", ".31em")
     .text(function(d) { return d.name; });
+
+var gradient = d3.select("svg").append("defs")
+    .append("linearGradient")
+    .attr("id", "gradient")
+    .attr("spreadMethod", "pad");
+
+  gradient.append("stop")
+    .attr("offset", "0%")
+    .attr("stop-color", "red")
+    .attr("stop-opacity", 1);
+
+	gradient.append("stop")
+    .attr("offset", "100%")
+    .attr("stop-color", "blue")
+    .attr("stop-opacity", 1);
+
 
 // Use elliptical arc path segments to doubly-encode directionality.
 function tick() {
