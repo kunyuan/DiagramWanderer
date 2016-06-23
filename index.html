@@ -8,10 +8,6 @@
   stroke-width: 1.5px;
 }
 
-#licensing {
-  fill: green;
-}
-
 .link.G {
   stroke: green;
 }
@@ -19,6 +15,15 @@
 .link.W {
   stroke-dasharray: 0,2 1;
 }
+
+.link.Measure {
+  stroke-dasharray: 0,2 1;
+}
+
+.link.Worm {
+  stroke-dasharray: 0,2 1;
+}
+
 
 circle {
   fill: #ccc;
@@ -57,16 +62,9 @@ var links = [];
 Green.forEach(function(link) {
     links.push({source: nodes[link["In"]], target: nodes[link["Out"]], type : link["Type"]});
 });
-/*
-Green.forEach(function(link) {
-    links[link["Index"]]=
-               {source: nodes[link["In"]],
-                target: nodes[link["Out"]],
-                type: link["Type"]
-               };
-
+Interaction.forEach(function(link) {
+    links.push({source: nodes[link["In"]], target: nodes[link["Out"]], type : link["Type"]});
 });
-*/
 
 var width = 960,
     height = 500;
