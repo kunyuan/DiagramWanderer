@@ -7,13 +7,13 @@ var Vertex = [
 {Index: 6, Type: "Vertex", R : "(0,0,2)" }
 ];
 var Green = [
-  {Index: 1, In: 4,  Out: 6, Type: "G", InSpin: 0, OutSpin: 0, K: 100, Weight: "20.5"},
-  {Index: 2, In: 6,  Out: 2, Type: "G", InSpin: 1, OutSpin: 1, K: 120, Weight: "0.5"},
-  {Index: 3, In: 2,  Out: 5, Type: "G", InSpin: 1, OutSpin: 1, K: 120, Weight: "0.5"},
-  {Index: 4, In: 2,  Out: 3, Type: "G", InSpin: 0, OutSpin: 0, K: 120, Weight: "0.5"},
-  {Index: 5, In: 3,  Out: 1, Type: "G", InSpin: 0, OutSpin: 0, K: 120, Weight: "0.5"},
-  {Index: 6, In: 1,  Out: 6, Type: "G", InSpin: 1, OutSpin: 1, K: 120, Weight: "0.5"},
-  {Index: 7, In: 6,  Out: 1, Type: "G", InSpin: 1, OutSpin: 1, K: 120, Weight: "0.5"},
+  {Index: 1, In: 4,  Out: 6, Type: "G", SpinIn: 0, SpinOut: 0, K: 100, Weight: "20.5"},
+  {Index: 2, In: 6,  Out: 2, Type: "G", SpinIn: 0, SpinOut: 1, K: 120, Weight: "0.5"},
+  {Index: 3, In: 2,  Out: 5, Type: "G", SpinIn: 1, SpinOut: 0, K: 120, Weight: "0.5"},
+  {Index: 4, In: 2,  Out: 3, Type: "G", SpinIn: 0, SpinOut: 0, K: 120, Weight: "0.5"},
+  {Index: 5, In: 3,  Out: 1, Type: "G", SpinIn: 0, SpinOut: 0, K: 120, Weight: "0.5"},
+  {Index: 6, In: 1,  Out: 6, Type: "G", SpinIn: 1, SpinOut: 1, K: 120, Weight: "0.5"},
+  {Index: 7, In: 6,  Out: 1, Type: "G", SpinIn: 1, SpinOut: 1, K: 120, Weight: "0.5"},
   //{source: "Microsoft", target: "Amazon", type: "licensing"},
 ];
 

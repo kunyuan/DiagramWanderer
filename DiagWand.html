@@ -8,15 +8,25 @@
   stroke-width: 1.5px;
 }
 
-.link.G.spin0 {
-  stroke: url(#gradient);
+.link.G10 {
+  stroke: url(#Gcolor10);
 }
-.link.G.spin1 {
-  stroke: blue;
+.link.G01 {
+  stroke: url(#Gcolor01);
 }
-#G {
-    fill: red
+.link.G00 {
+  stroke: url(#Gcolor00);
 }
+.link.G11 {
+  stroke: url(#Gcolor11);
+}
+#G0{
+    fill:red;  //the arrow has spin 0 color
+}
+#G1{
+    fill:blue; //the arrow has spin 1 color
+}
+
 .link.W {
   stroke-dasharray: 0,2 1;
 }
@@ -56,11 +66,15 @@ Vertex.forEach(function(node){
 
 var links = [];
 Green.forEach(function(link) {
-    links.push({source: nodes[link["In"]], target: nodes[link["Out"]], type : link["Type"], link: link});
+    link["source"]=nodes[link["In"]];
+    link["target"]=nodes[link["Out"]];
+    links.push(link);
 });
 
 Interaction.forEach(function(link) {
-    links.push({source: nodes[link["In"]], target: nodes[link["Out"]], type : link["Type"], link: link});
+    link["source"]=nodes[link["In"]];
+    link["target"]=nodes[link["Out"]];
+    links.push(link);
 });
 
 links.forEach(function(link1) {
@@ -93,7 +107,7 @@ var svg = d3.select("body").append("svg")
 
 // Per-type markers, as they don't inherit styles.
 svg.append("defs").selectAll("marker")
-    .data(["G"])     // if you want arrow, add your type here
+    .data(["G0","G1"])
   .enter().append("marker")
     .attr("id", function(d) { return d; })
     .attr("viewBox", "0 -5 10 10")
@@ -105,11 +119,21 @@ svg.append("defs").selectAll("marker")
   .append("path")
     .attr("d", "M0,-5L10,0L0,5");
 
+function Str(spin){
+    //if "spin" is undefined, just return null string
+    return spin==undefined?"":spin.toString();
+}
+function Color(spin){
+    //if "spin" is undefined, just return null string
+    return spin==0?"red":"blue";
+}
+
+
 var path = svg.append("g").selectAll("path")
     .data(force.links())
   .enter().append("path")
-    .attr("class", function(d) { return "link " + d.type+" spin"+d.link.InSpin; })
-    .attr("marker-end", function(d) { return "url(#" + d.type+")"; });
+    .attr("class", function(d) { return "link " + d.Type+Str(d.SpinIn)+Str(d.SpinOut); })
+    .attr("marker-end", function(d) { return "url(#" + d.Type+Str(d.SpinOut)+")"; });
 
 var circle = svg.append("g").selectAll("circle")
     .data(force.nodes())
@@ -124,20 +148,23 @@ var text = svg.append("g").selectAll("text")
     .attr("y", ".31em")
     .text(function(d) { return d.name; });
 
-var gradient = d3.select("svg").append("defs")
-    .append("linearGradient")
-    .attr("id", "gradient")
-    .attr("spreadMethod", "pad");
+var gradient = d3.select("svg").append("defs");
+for(spin0=0;spin0<2;spin0++){
+    for(spin1=0;spin1<2;spin1++){
+        var lingrad=gradient.append("linearGradient")
+                .attr("id", "Gcolor"+spin0+spin1)
+                .attr("spreadMethod", "pad");
+        lingrad.append("stop")
+            .attr("offset", "40%")
+            .attr("stop-color", Color(spin0))
+            .attr("stop-opacity", 1);
 
-  gradient.append("stop")
-    .attr("offset", "0%")
-    .attr("stop-color", "red")
-    .attr("stop-opacity", 1);
-
-	gradient.append("stop")
-    .attr("offset", "100%")
-    .attr("stop-color", "blue")
-    .attr("stop-opacity", 1);
+        lingrad.append("stop")
+            .attr("offset", "60%")
+            .attr("stop-color", Color(spin1))
+            .attr("stop-opacity", 1);
+    }
+}
 
 
 // Use elliptical arc path segments to doubly-encode directionality.
