@@ -4,22 +4,9 @@
 
 .link {
   fill: none;
-  stroke: #666;
   stroke-width: 1.5px;
 }
 
-.link.G10 {
-  stroke: url(#Gcolor10);
-}
-.link.G01 {
-  stroke: url(#Gcolor01);
-}
-.link.G00 {
-  stroke: url(#Gcolor00);
-}
-.link.G11 {
-  stroke: url(#Gcolor11);
-}
 #G0{
     fill:red;  //the arrow has spin 0 color
 }
@@ -28,14 +15,17 @@
 }
 
 .link.W {
+  stroke: #666;
   stroke-dasharray: 0,2 1;
 }
 
 .link.Measure {
+  stroke: #666;
   stroke-dasharray: 0,2 1;
 }
 
 .link.Worm {
+  stroke: #666;
   stroke-dasharray: 0,2 1;
 }
 
@@ -128,11 +118,11 @@ function Color(spin){
     return spin==0?"red":"blue";
 }
 
-
 var path = svg.append("g").selectAll("path")
     .data(force.links())
   .enter().append("path")
     .attr("class", function(d) { return "link " + d.Type+Str(d.SpinIn)+Str(d.SpinOut); })
+    .attr("stroke", function(d) { return "url(#Gcolor"+Str(d.SpinIn)+Str(d.SpinOut)+")";})
     .attr("marker-end", function(d) { return "url(#" + d.Type+Str(d.SpinOut)+")"; });
 
 var circle = svg.append("g").selectAll("circle")
