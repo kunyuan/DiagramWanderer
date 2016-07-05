@@ -2,11 +2,26 @@
 <meta charset="utf-8">
 <style>
 
+/* CSS part of the code */
+
 .link {
   fill: none;
-  stroke-width: 1.5px;
+  stroke: #666;
+  stroke-width: 2px;
 }
 
+.link.G10 {
+  stroke: url(#Gcolor10);
+}
+.link.G01 {
+  stroke: url(#Gcolor01);
+}
+.link.G00 {
+  stroke: red;
+}
+.link.G11 {
+  stroke: blue;
+}
 #G0{
     fill:red;  //the arrow has spin 0 color
 }
@@ -25,10 +40,34 @@
 }
 
 .link.Worm {
-  stroke: #666;
   stroke-dasharray: 0,2 1;
 }
 
+.node.Vertex {
+  fill: #fff;
+  stroke: #000;
+  stroke-width: 3px;
+}
+
+.node.External{
+  fill: #fff;
+  stroke: #fff;
+  stroke-width: 3px;
+}
+
+.node.Ira{
+  fill: #ff69b4;
+  stroke: #551a8b;
+  stroke-dasharray: 0,0 2;
+  stroke-width: 3px;
+}
+
+.node.Masha{
+    fill: #551a8b;
+    stroke: #ff69b4;
+    stroke-dasharray: 0,0 2;
+    stroke-width: 3px;
+}
 
 circle {
   fill: #ccc;
@@ -48,25 +87,52 @@ text {
 <script src="diagram.js"></script>
 <script>
 
+// JavaScript part of the code
+
+// imagesize
+var width = 500,
+    height = 500;
+
 var nodes = {};
 
+var total_ext = 0;
+var curr_ext = 0;
+
+// count external nodes
 Vertex.forEach(function(node){
-    nodes[node["Index"]]=node;
+    if(node["fixed"]== true){total_ext++;};
 });
 
+// define nodes
+Vertex.forEach(function(node){
+    nodes[node["Index"]]=node;
+    // arranges external vertices on a circle
+    if(node["fixed"]== true){
+      curr_ext++;
+        node["x"] =  width/2 +  Math.round(Math.cos(Math.PI/total_ext+ (2 * Math.PI * parseFloat(curr_ext))/parseFloat(total_ext)) * width/3);
+        node["y"] =  height/2 + Math.round(Math.sin(Math.PI/total_ext+ (2 * Math.PI * parseFloat(curr_ext))/parseFloat(total_ext)) * height/3);
+    };
+
+});
+
+
 var links = [];
+
+// define source and target for Greens function links
 Green.forEach(function(link) {
     link["source"]=nodes[link["In"]];
     link["target"]=nodes[link["Out"]];
     links.push(link);
 });
 
+// define source and target for interaction links
 Interaction.forEach(function(link) {
     link["source"]=nodes[link["In"]];
     link["target"]=nodes[link["Out"]];
     links.push(link);
 });
 
+// check whether two links connect the same nodes
 links.forEach(function(link1) {
     links.forEach(function(link2){
         if(link1!=link2) {
@@ -79,18 +145,23 @@ links.forEach(function(link1) {
     });
 });
 
-var width = 960,
-    height = 500;
 
+
+// define repulsive force between nodes, define length of links
 var force = d3.layout.force()
     .nodes(d3.values(nodes))
     .links(links)
     .size([width, height])
     .linkDistance(60)
-    .charge(-300)
+    .charge(-1000)
     .on("tick", tick)
     .start();
 
+
+var drag = force.drag()
+    .on("dragstart", dragstart);
+
+// create image using svg
 var svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height);
@@ -102,35 +173,41 @@ svg.append("defs").selectAll("marker")
     .attr("id", function(d) { return d; })
     .attr("viewBox", "0 -5 10 10")
     .attr("refX", 15)
-    .attr("refY", -1.5)
+    .attr("refY", 0)
     .attr("markerWidth", 6)
     .attr("markerHeight", 6)
     .attr("orient", "auto")
   .append("path")
     .attr("d", "M0,-5L10,0L0,5");
 
+// if "spin" is undefined, just return null string
 function Str(spin){
-    //if "spin" is undefined, just return null string
     return spin==undefined?"":spin.toString();
 }
+
+// if "spin" is undefined, just return null string
 function Color(spin){
-    //if "spin" is undefined, just return null string
     return spin==0?"red":"blue";
 }
 
+// create links
 var path = svg.append("g").selectAll("path")
     .data(force.links())
   .enter().append("path")
     .attr("class", function(d) { return "link " + d.Type+Str(d.SpinIn)+Str(d.SpinOut); })
-    .attr("stroke", function(d) { return "url(#Gcolor"+Str(d.SpinIn)+Str(d.SpinOut)+")";})
     .attr("marker-end", function(d) { return "url(#" + d.Type+Str(d.SpinOut)+")"; });
 
+// create node circles
 var circle = svg.append("g").selectAll("circle")
     .data(force.nodes())
-  .enter().append("circle")
+    .enter().append("circle")
+    //.attr("class", "node")
+    .attr("class", function(d) { return "node " + d.Type; })
     .attr("r", 6)
-    .call(force.drag);
+    .on("dblclick", dblclick)
+    .call(drag);
 
+// create svg text
 var text = svg.append("g").selectAll("text")
     .data(force.nodes())
   .enter().append("text")
@@ -138,6 +215,7 @@ var text = svg.append("g").selectAll("text")
     .attr("y", ".31em")
     .text(function(d) { return d.name; });
 
+// create gradient lines for spin-flips (not working well right now)
 var gradient = d3.select("svg").append("defs");
 for(spin0=0;spin0<2;spin0++){
     for(spin1=0;spin1<2;spin1++){
@@ -164,6 +242,7 @@ function tick() {
   text.attr("transform", transform);
 }
 
+// create arcs when two vertices are connected with multiple greens functions.
 function linkArc(d) {
   var dx = d.target.x - d.source.x;
   var dy = d.target.y - d.source.y;
@@ -174,8 +253,17 @@ function linkArc(d) {
   return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
 }
 
+// find new coordinates for circles
 function transform(d) {
   return "translate(" + d.x + "," + d.y + ")";
+}
+
+function dblclick(d) {
+  d3.select(this).classed("fixed", d.fixed = false);
+}
+
+function dragstart(d) {
+  d3.select(this).classed("fixed", d.fixed = true);
 }
 
 </script>
