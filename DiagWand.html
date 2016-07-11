@@ -84,12 +84,14 @@ text {
 </style>
 <body>
 <script src="d3.js"></script>
-<script src="diagram.js"></script>
+<script src="diagram_2.js"></script>
 <script>
 
 // JavaScript part of the code
 
 // imagesize
+
+
 var width = 500,
     height = 500;
 
@@ -122,6 +124,7 @@ var links = [];
 Green.forEach(function(link) {
     link["source"]=nodes[link["In"]];
     link["target"]=nodes[link["Out"]];
+    link.arc=0;
     links.push(link);
 });
 
@@ -129,6 +132,7 @@ Green.forEach(function(link) {
 Interaction.forEach(function(link) {
     link["source"]=nodes[link["In"]];
     link["target"]=nodes[link["Out"]];
+    link.arc=0;
     links.push(link);
 });
 
@@ -138,14 +142,12 @@ links.forEach(function(link1) {
         if(link1!=link2) {
             if(link1.source==link2.source&&link1.target==link2.target||
             link1.target==link2.source&&link1.source==link2.target){
-                link1.arc=true;
-                link2.arc=true;
+                link1.arc=1;
+                link2.arc=-1;
             }
         }
     });
 });
-
-
 
 // define repulsive force between nodes, define length of links
 var force = d3.layout.force()
@@ -247,10 +249,19 @@ function linkArc(d) {
   var dx = d.target.x - d.source.x;
   var dy = d.target.y - d.source.y;
   var dr=0;
-  if(d.arc==true){
+  var x1=d.target.x
+  var y1=d.target.y
+  var x2=d.source.x
+  var y2=d.source.y
+  if(d.arc!=0){
       dr = Math.sqrt(dx * dx + dy * dy);
+      //if arc==1 then return with " 0 0,0 "
+      //if arc==-1 then return with" 0 0,1 "
+      if(d.arc==-1){
+          return "M" + x2 + "," + y2 + "A" + dr + "," + dr + " 0 0,0 " + x1 + "," + y1;
+      }
   }
-  return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+  return "M" + x2 + "," + y2 + "A" + dr + "," + dr + " 0 0,1 " + x1 + "," + y1;
 }
 
 // find new coordinates for circles
