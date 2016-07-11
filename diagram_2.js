@@ -25,12 +25,12 @@ var Green = [
   {Index: 7, In: 7,  Out: 8, Type: "G", SpinIn: 0, SpinOut: 0},
   {Index: 10, In: 9,  Out: 7, Type: "G", SpinIn: 0, SpinOut: 0},
   {Index: 11, In: 6,  Out: 10, Type: "G", SpinIn: 0, SpinOut: 0},
-  {Index: 13, In: 9,  Out: 10, Type: "G", SpinIn: 0, SpinOut: 0},
+  {Index: 13, In: 10,  Out: 9, Type: "G", SpinIn: 0, SpinOut: 0},
     // internal spin down
   {Index: 6, In: 6,  Out: 7, Type: "G", SpinIn: 1, SpinOut: 1},
   {Index: 8, In: 8,  Out: 5, Type: "G", SpinIn: 1, SpinOut: 1},
   {Index: 9, In: 5,  Out: 10, Type: "G", SpinIn: 1, SpinOut: 1},
-  {Index: 12, In: 9,  Out: 10, Type: "G", SpinIn: 1, SpinOut: 1},
+  {Index: 12, In: 10,  Out: 9, Type: "G", SpinIn: 1, SpinOut: 1},
   {Index: 14, In: 9,  Out: 8, Type: "G", SpinIn: 1, SpinOut: 1},
 ];
 

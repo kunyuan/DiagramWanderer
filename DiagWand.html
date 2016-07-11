@@ -91,6 +91,8 @@ text {
 // JavaScript part of the code
 
 // imagesize
+
+
 var width = 500,
     height = 500;
 
@@ -147,8 +149,6 @@ links.forEach(function(link1) {
         }
     });
 });
-
-
 
 // define repulsive force between nodes, define length of links
 var force = d3.layout.force()
@@ -256,13 +256,13 @@ function linkArc(d) {
   var y2=d.source.y
   if(d.arc!=0){
       dr = Math.sqrt(dx * dx + dy * dy);
-      //if arc==1 then return arc with (x1,y1) as the source and (x2,y2) as the target
-      //if arc==-1 then return arc with (x2,y2) as the source and (x1,y1) as the target
+      //if arc==1 then return with " 0 0,0 "
+      //if arc==-1 then return with" 0 0,1 "
       if(d.arc==-1){
-          return "M" + x2 + "," + y2 + "A" + dr + "," + dr + " 0 0,1 " + x1 + "," + y1;
+          return "M" + x2 + "," + y2 + "A" + dr + "," + dr + " 0 0,0 " + x1 + "," + y1;
       }
   }
-  return "M" + x1 + "," + y1 + "A" + dr + "," + dr + " 0 0,1 " + x2 + "," + y2;
+  return "M" + x2 + "," + y2 + "A" + dr + "," + dr + " 0 0,1 " + x1 + "," + y1;
 }
 
 // find new coordinates for circles
