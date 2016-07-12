@@ -1,0 +1,7 @@
+#!/bin/bash
+# script to open DiagWand with a default diagram file 
+name=${1:-diagram}
+cp DiagWand.html $name$'.html'
+sed -i -e "s/diagram.js/$name.js/g" $name$'.html'
+open $name$'.html'
+rm $name$'.html-e' 
