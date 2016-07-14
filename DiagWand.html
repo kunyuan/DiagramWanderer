@@ -30,8 +30,8 @@
 }
 
 .link.W {
-  stroke: #666;
-  stroke-dasharray: 0,2 1;
+  stroke: #0f0;
+  stroke-dasharray: 4,4 4;
 }
 
 .link.Measure {
@@ -40,7 +40,8 @@
 }
 
 .link.Worm {
-  stroke-dasharray: 0,2 1;
+  stroke: #ff69b4;
+  stroke-dasharray: 2,1 2;
 }
 
 .node.Vertex {
@@ -125,7 +126,7 @@ var links = [];
 Green.forEach(function(link) {
     link["source"]=nodes[link["In"]];
     link["target"]=nodes[link["Out"]];
-    link.arc=0;
+    link.arc=0.1;
     links.push(link);
 });
 
@@ -133,7 +134,7 @@ Green.forEach(function(link) {
 Interaction.forEach(function(link) {
     link["source"]=nodes[link["In"]];
     link["target"]=nodes[link["Out"]];
-    link.arc=0;
+    link.arc=0.1;
     links.push(link);
 });
 
@@ -141,10 +142,13 @@ Interaction.forEach(function(link) {
 links.forEach(function(link1) {
     links.forEach(function(link2){
         if(link1!=link2) {
-            if(link1.source==link2.source&&link1.target==link2.target||
-            link1.target==link2.source&&link1.source==link2.target){
-                link1.arc=1;
-                link2.arc=-1;
+            if(link1.source==link2.source&&link1.target==link2.target){
+              link1.arc=1;
+              link2.arc=-1;
+            }
+            if(link1.target==link2.source&&link1.source==link2.target){
+              link1.arc=-1;
+              link2.arc=-1;
             }
         }
     });
@@ -175,7 +179,7 @@ svg.append("defs").selectAll("marker")
   .enter().append("marker")
     .attr("id", function(d) { return d; })
     .attr("viewBox", "0 -5 10 10")
-    .attr("refX", 15)
+    .attr("refX", 3)
     .attr("refY", 0)
     .attr("markerWidth", 6)
     .attr("markerHeight", 6)
@@ -198,7 +202,8 @@ var path = svg.append("g").selectAll("path")
     .data(force.links())
   .enter().append("path")
     .attr("class", function(d) { return "link " + d.Type+Str(d.SpinIn)+Str(d.SpinOut); })
-    .attr("marker-end", function(d) { return "url(#" + d.Type+Str(d.SpinOut)+")"; });
+  //  .attr("marker-mid", function(d) { return "url(#" + d.Type+Str(d.SpinOut)+")"; });
+    .attr("marker-mid", function(d) { return "url(#" + d.Type+Str(d.SpinIn)+")"; });
 
 // create node circles
 var circle = svg.append("g").selectAll("circle")
@@ -254,15 +259,21 @@ function linkArc(d) {
   var y1=d.target.y
   var x2=d.source.x
   var y2=d.source.y
-  if(d.arc!=0){
-      dr = Math.sqrt(dx * dx + dy * dy);
-      //if arc==1 then return with " 0 0,0 "
-      //if arc==-1 then return with" 0 0,1 "
-      if(d.arc==-1){
-          return "M" + x2 + "," + y2 + "A" + dr + "," + dr + " 0 0,0 " + x1 + "," + y1;
-      }
+
+  dr = Math.sqrt(dx * dx + dy * dy);
+
+  //if arc==1 then return with " 0 0,0 "
+  if(d.arc==-1){
+    return "M" + x2 + "," + y2 + "A" + dr + "," + dr + " 0 0,1 " + x1 + "," + y1;
   }
-  return "M" + x2 + "," + y2 + "A" + dr + "," + dr + " 0 0,1 " + x1 + "," + y1;
+  //if arc==-1 then return with" 0 0,1 "
+  if(d.arc==1){
+    return "M" + x2 + "," + y2 + "A" + dr + "," + dr + " 0 0,0 " + x1 + "," + y1;
+  }
+  //straight link is defined as very small arc so marker-mid knows it's midpoint
+  if(d.arc=0.1){
+        return "M" + x2 + "," + y2 + "A" + 50000 + "," + 50000 + " 0 0,0 " + x1 + "," + y1;
+  }
 }
 
 // find new coordinates for circles
